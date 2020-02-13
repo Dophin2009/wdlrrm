@@ -1,0 +1,53 @@
+\documentclass[11pt]{article}                             % Declare document class
+\usepackage[margin=2.5cm]{geometry}                       % Set geometry options
+\usepackage{multicol}                                     % Declare packages used
+\usepackage{graphicx,caption}
+\usepackage{nonfloat}
+\usepackage{fancyhdr}
+\usepackage{blindtext}
+
+\newenvironment{colfigure}{                               % Defining a new environment
+  {\noindent\minipage{\linewidth}}                        % Commands/text to put before
+  {\endminipage\par\bigskip}                              % Commands/text to put after
+}
+
+\newcommand{\colgraphic}[2]{%%                            % Defining a custom command
+  \begin{colfigure}                                       % Use the environment defined earlier
+    \centering                                            % Center contents
+    \includegraphics[width=0.85\linewidth]{#1}            % Include the specified image
+    \captionof{figure}{#2}                                % Print a caption
+  \end{colfigure}
+}
+
+\pagestyle{fancy}                                         % Use
+\fancyhf{}
+\rhead{Writing Documents with LaTeX, R, and Rmarkdown}
+\lhead{Presentation}
+\rfoot{\thepage}
+
+\begin{document}                                          % Begin document
+
+\medskip                                                  % Blank space
+\noindent\makebox[\linewidth]{                            % Add a horizontal line
+  \rule{\textwidth}{0.2pt}
+}
+
+\begin{multicols}{2}                                      % Begin a two-column layout
+                                                          % Using an environment called multicols
+  \section{Introduction}                                  % Define section header
+  \blindtext{5}                                           % Generate lorem ipsum
+
+  \subsection{Background}                                 % Define a subsection
+  \blindtext
+
+  \section{Analysis}
+  \blindtext
+
+  \colgraphic{./xkcd-file-ext.png}{Here's a caption!}     % Use our command from earlier to add
+  \bigskip                                                % an image
+
+  \noindent\blindtext                                     % More lorem ipsum
+
+\end{multicols}                                           % End multicols environment
+
+\end{document}                                            % End document

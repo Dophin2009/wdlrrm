@@ -1,0 +1,125 @@
+---
+title: Writing Documents with LaTeX, R, and Rmarkdown
+output:
+  revealjs::revealjs_presentation:
+    center: false
+    css:
+      - styles.css
+    highlight: pygments
+    pandoc_args: [ "--filter", "pandoc-include-code" ]
+    theme: serif
+    transition: fade
+---
+
+# What is LaTeX?
+
+LaTeX is a document typsetting language and build system based off TeX
+
+-   Turing-complete
+-   Powerful control over formatting
+-   Define commands and macros
+-   Automate citations
+
+# Installing TeX
+
+TeX comes in many different distributions
+
+-   **TeX Live**: the distribution of choice for most \*nix distributions
+    -   Packages available for most Linux distributions
+-   **MiKTeX**: maintained for Windows; has a Windows installer
+-   **MacTeX**: like TeX Live, but more compatibility with OS X
+
+Full installation might be up to ~6 GB
+
+# Creating a LaTeX Document {.noscroll}
+
+Here's an example LaTeX document: 
+
+
+```{.latex include=docs/example-latex.tex}
+```
+
+# Breaking It Down
+
+`\documentclass[options]{class}` defines the layout standard
+
+-   `options` can set main font size, paper size, and column structure
+-   `class` defines standard layout; can be `article`, `report`, `book`, 
+    `letter`, `beamer`, etc.
+
+`\usepackage[options]{pkgname}` imports a TeX package and exposes it commands
+for use
+
+----
+
+## Document
+
+`\begin{blockname}` begins some block of text and commands
+
+-   `blockname` may be associated with some command or custom definition
+-   `\begin{document}` defines where the document actually begins
+-   `\begin{titlepage}` declares a page dedicated to the title
+
+`\end{blockname}` ends a block
+
+`\section` defines a new section/chapter/etc. block
+
+## Commands
+
+`\textbf` makes text bold; `\textit` makes text italicized
+
+Changing text size: 
+
+-   `\small` makes text small; `\Large`, well, large
+-   Some other basic font differences, such as `\large` and `\Huge`
+
+`\blindtext`, provided by the `blindtext` package, produces filler text
+
+These are just a couple basic ones, there are many, many more provided by the
+core library and packages
+
+# Making It Useful
+
+There are a number of TeX compilers that should be included in standard TeX
+installations.
+
+-   **`latex`** - generates a DVI document, but supports only `.eps` and `.ps` 
+    image formats
+-   **`pdflatex`** - generates a PDF document; supports `.png`, `.jpg`, and
+    `.pdf` image formats
+-   **`xelatex`** - like `pdflatex`, but with robust Unicode and font support
+-   **`lualatex`** - like `xelatex`, but can embed Lua code
+
+----
+
+```shell
+> xelatex example-latex.tex     # produces example-latex.pdf
+```
+
+![](docs/example-latex-1.png){width=80%}
+
+# Increasing Complexity
+
+Here's a slightly more complicated example:
+
+```{.latex include=docs/example-twocolumn.tex}
+```
+
+```shell
+> tree --dirsfirst --charset=ascii -n .
+.
+|-- example-twocolumn.tex
+`-- xkcd-file-ext.png
+```
+
+----
+
+```shell
+> xelatex example-twocolumn.tex   # produces example-twocolumn.tex
+```
+
+![](docs/example-twocolumn-1.png){width=60%}
+
+# Toning Back the Complexity
+
+# Markdown
