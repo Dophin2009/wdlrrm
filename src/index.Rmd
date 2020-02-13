@@ -107,9 +107,9 @@ Here's a slightly more complicated example:
 
 ```shell
 > tree --dirsfirst --charset=ascii -n .
-.
-|-- example-twocolumn.tex
-`-- xkcd-file-ext.png
+  .
+  |-- example-twocolumn.tex
+  `-- xkcd-file-ext.png
 ```
 
 ----
@@ -121,5 +121,7 @@ Here's a slightly more complicated example:
 ![](docs/example-twocolumn-1.png){width=60%}
 
 # Toning Back the Complexity
+
+Sometimes you might not need that much control or complexity
 
 # Markdown

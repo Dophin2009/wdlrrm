@@ -1,6 +1,7 @@
 \documentclass[11pt]{article}                             % Declare document class
-\usepackage[margin=2.5cm]{geometry}                       % Set geometry options
+
 \usepackage{multicol}                                     % Declare packages used
+\usepackage[margin=2.5cm]{geometry}                       % Set geometry options
 \usepackage{graphicx,caption}
 \usepackage{nonfloat}
 \usepackage{fancyhdr}
@@ -19,13 +20,15 @@
   \end{colfigure}
 }
 
-\pagestyle{fancy}                                         % Use
+\pagestyle{fancy}                                         % Use fancy header style
 \fancyhf{}
-\rhead{Writing Documents with LaTeX, R, and Rmarkdown}
-\lhead{Presentation}
-\rfoot{\thepage}
+\rhead{Writing Documents with LaTeX, R, and Rmarkdown}    % Right text in header
+\lhead{\thepage\enspace Example Documents}                % Left text in header
 
 \begin{document}                                          % Begin document
+
+\section{Introduction}                                    % Define section header
+\blindtext[1]                                             % Generate lorem ipsum
 
 \medskip                                                  % Blank space
 \noindent\makebox[\linewidth]{                            % Add a horizontal line
@@ -34,10 +37,7 @@
 
 \begin{multicols}{2}                                      % Begin a two-column layout
                                                           % Using an environment called multicols
-  \section{Introduction}                                  % Define section header
-  \blindtext{5}                                           % Generate lorem ipsum
-
-  \subsection{Background}                                 % Define a subsection
+  \section{Background}                                    % Define a subsection
   \blindtext
 
   \section{Analysis}
