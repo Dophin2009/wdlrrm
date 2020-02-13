@@ -5,7 +5,7 @@ default: build
 build: clean
 	scripts/build.sh
 
-serve: build
+serve: clean
 	scripts/serve.sh
 
 clean:

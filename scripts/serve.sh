@@ -1,23 +1,34 @@
 #!/bin/sh
-echo "Serving..."
+script_dir=scripts
+script_build=$script_dir/build.sh
+script_clean=$script_dir/clean.sh
+script_checkcmd=$script_dir/check_cmd.sh
 
-set -e
+# Define shutdown process
+shutdown() {
+  PGID=$(ps -o pgid= $$ | grep -o [0-9]*)
+  kill -9 -$PGID
+  exit 0
+}
+
+trap "shutdown" SIGINT SIGTERM EXIT
+
+# Check if required commands exist
+declare -a req_commands=("python3" "inotifywait")
+for c in "${req_commands[@]}"; do
+  $script_checkcmd "$c" || exit
+done
+
+# Initial build
+$script_build
 
 # Start http server
-python -m http.server 5200 --directory build &
-http_pid=$!
-
-close() {
-  echo "Interrupt recieved, killing http server"
-  kill -9 $http_pid
-  exit 1
-}
-trap '{ close ; }' INT
+python3 -m http.server 5200 --directory build &
 
 # Watch for changes in src and rebuild
 inotifywait -e modify \
   -r -q -m src |
 while read ; do
-  scripts/clean.sh || close
-  scripts/build.sh || close
+  $script_clean || exit
+  $script_build || exit
 done
