@@ -12,7 +12,7 @@ close() {
   kill -9 $http_pid
   exit 1
 }
-trap '{ close }' INT
+trap '{ close ; }' INT
 
 # Watch for changes in src and rebuild
 inotifywait -e modify \
