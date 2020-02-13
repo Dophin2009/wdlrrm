@@ -20,6 +20,7 @@ LaTeX is a document typsetting language and build system based off TeX
 -   Define commands and macros
 -   Automate citations
 
+
 # Installing TeX
 
 TeX comes in many different distributions
@@ -31,6 +32,7 @@ TeX comes in many different distributions
 
 Full installation might be up to ~6 GB
 
+
 # Creating a LaTeX Document {.noscroll}
 
 Here's an example LaTeX document: 
@@ -38,6 +40,7 @@ Here's an example LaTeX document:
 
 ```{.latex include=docs/example-latex.tex}
 ```
+
 
 # Breaking It Down
 
@@ -49,8 +52,6 @@ Here's an example LaTeX document:
 
 `\usepackage[options]{pkgname}` imports a TeX package and exposes it commands
 for use
-
-----
 
 ## Document
 
@@ -78,6 +79,7 @@ Changing text size:
 These are just a couple basic ones, there are many, many more provided by the
 core library and packages
 
+
 # Making It Useful
 
 There are a number of TeX compilers that should be included in standard TeX
@@ -97,6 +99,7 @@ installations.
 ```
 
 ![](docs/example-latex-1.png){width=80%}
+
 
 # Increasing Complexity
 
@@ -120,8 +123,27 @@ Here's a slightly more complicated example:
 
 ![](docs/example-twocolumn-1.png){width=60%}
 
+
 # Toning Back the Complexity
 
 Sometimes you might not need that much control or complexity
 
 # Markdown
+
+A simple markup language for writing documents that require simple formatting
+
+-   Used almost universally in README files
+-   Comes in many different flavors; depends on the parser
+-   Many parsers to transform markdown into HTML, PDF, DVI, etc.
+
+# Example
+
+Very basic syntax that should be unviersal across most markdown processors
+
+```{.markdown include=docs/example-markdown.md}
+```
+
+Things like tables usually differ across processors; some support, some don't, 
+syntax might be different
+
+# Pandoc
