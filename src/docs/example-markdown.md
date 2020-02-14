@@ -13,7 +13,7 @@ technically just a continuation of the last.
 
 ## More Things
 
-Insert a link: ![some text placeholder](https://)
+Insert a link: [some text placeholder](https://)
 
 A list of items:
 

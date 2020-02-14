@@ -30,5 +30,5 @@ inotifywait -e modify \
   -r -q -m src |
 while read ; do
   $script_clean || exit
-  $script_build || exit
+  $script_build
 done
