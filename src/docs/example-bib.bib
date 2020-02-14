@@ -1,16 +1,24 @@
-@book{ref_engineering_statistics_handbook,
+@book{mishima,                                        % Type and identifier of the citation
+  author = {Yukio Mishima},                           % Self-explanatory fields
+  title = {Spring Snow},
+  publisher = {Vintage International},
+  date = {1990-04-14},
+  ISBN = {0679722416},
+}
+
+@book{statmethods,
   title = {{NIST}/{SEMATECH} {e}-{Handbook} of Statistical Methods},
   url = {http://www.itl.nist.gov/div898/handbook},
   urldate = {2020-01-11},
 }
 
-@inbook{ref_heteroskedasticity,
+@inbook{statmethodsheteroscedastic,                   % Cite a specific section in a book
   author = {James J. Filliben and Alan Heckert},
   chapter = {1.3.3.26.9: Scatter Plot: Variation of Y Does Depend on X ({heteroscedastic})},
-  crossref = {ref_engineering_statistics_handbook},
+  crossref = {ref_engineering_statistics_handbook},   % Reference the book this citation is part of
 }
 
-@manual{ref_r_pkg_car,
+@manual{rpkgcar,
   author = {John Fox and Sanford Weisberg and Brad Price},
   title = {{car}: Companion to Applied Regression},
   note = {R package version 3.0.6},
@@ -18,7 +26,7 @@
   urldate = {2020-01-11}
 }
 
-@misc{ref_romanization_sys,
+@misc{hadamitzky,
   author = {Wolfgang Hadamitzky},
   title = {Romanization Systems},
   url = {https://www.hadamitzky.de/english/lp_romanization_sys.htm#07},

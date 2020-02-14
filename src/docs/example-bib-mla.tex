@@ -1,0 +1,23 @@
+\documentclass[11pt]{article}
+
+\usepackage[
+  margin=3cm,
+  bottom=10cm,
+]{geometry}
+\usepackage{babel}
+\usepackage{blindtext}
+\usepackage[
+  backend=biber,
+  style=mla-new,
+]{biblatex}                               % Use MLA 8 style; use `mla` for MLA 7
+\addbibresource{example-bib-mla.bib}      % Same citation database as the last example
+
+\begin{document}
+
+\blindtext
+\autocite{mishima}
+\autocite{statmethods}
+
+\printbibliography                        % Print the bibliography
+
+\end{document}

@@ -1,14 +1,22 @@
 \documentclass[11pt]{article}
 
-\usepackage[margin=2cm]{geometry}
 \usepackage[
-  backend=biber,
-  autocite=footnote,
-  ]{biblatex-chicago}
-\addbibresource{example-bib.bib}
+  margin=3cm,
+  bottom=15cm,
+]{geometry}
+\usepackage{babel}
+\usepackage{blindtext}
+\usepackage[
+  backend=biber,                        % Define backend, modern is mostly biber, older is bibtex
+  style=verbose,                        % Set citation and bibliography style
+  autocite=footnote,                    % Use footnote citations
+]{biblatex}                             % Import biblatex package
+\addbibresource{example-bib.bib}        % Add a bib file            
 
 \begin{document}
 
-Lorem ipsum \autocite{ref_engineering_statistics_handbook}
+\blindtext
+\autocite{mishima}                      % Reference a citation
+\autocite{statmethods}
 
 \end{document}
