@@ -5,7 +5,7 @@ output:
     center: false
     css:
       - styles.css
-    highlight: pygments
+    highlight: haddock
     pandoc_args: [ "--filter", "pandoc-include-code" ]
     theme: serif
     transition: fade
@@ -309,7 +309,10 @@ pandoc example-markdown.md -o example-markdown.tex
 
 We can convert it to PDF:
 
--   By default, Pandoc uses `pdflatex`
+-   Markdown is first converted to TeX
+-   `pdflatex`, by default, converts to TeX to PDF
+
+----
 
 ```{bash, results = 'hide'}
 cd docs
@@ -323,6 +326,46 @@ pdftoppm "example-markdown.pdf" "example-markdown" -png
 
 ![](docs/example-markdown-1.png){width=65%}
 
+
+# Pandoc Markdown
+
+Pandoc has its own flavor of markdown that greatly expands on upon basic syntax
+
+-   Optionally enable and disable features when compiling
+
+## Code Blocks
+
+Delimit code blocks with triple backticks (`\`\`\``):
+
+````markdown
+
+``` python
+print("This is a code block with syntax highlighting")
+```
+
+````
+
+We can use tildes and give properties:
+
+-   Block identifier with `#identifier`
+-   Assign classes to use when rendering (`.classname`)
+    -   Many built in classes for specific highlighting of languages
+    -   `.numberLines` to show line numbers on the left
+
+```markdown
+
+~~~{#some-rust-code .rust .numberLines}
+fn Parse(val: Option<String>) -> String {
+  match val {
+    Some(v) -> v,
+    None -> String::new()
+  }
+}
+~~~
+
+Outside nested block!
+```
+
 # Passing Arguments to Pandoc
 
 Pandoc can read in many properties to customize the output
@@ -335,3 +378,4 @@ pandoc example-markdown.md -o example-markdown.pdf --pdf-engine=xelatex
 # Table of contents, numbered sections, code highlighting color scheme
 pandoc example-markdown.md -o example-markdown.pdf --toc --number-sections --highlight-style=pygments
 ```
+
