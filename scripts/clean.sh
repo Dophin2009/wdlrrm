@@ -1,3 +1,4 @@
 #!/bin/bash
 targetdir=build
-rm -rf $targetdir
+tmpdir=$targetdir/tmp
+rm -rf $tmpdir

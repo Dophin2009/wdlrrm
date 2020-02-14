@@ -5,6 +5,9 @@ default: build
 build: clean
 	scripts/build.sh
 
+http: build
+	scripts/http.sh
+
 serve: clean
 	scripts/serve.sh
 
