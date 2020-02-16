@@ -21,6 +21,10 @@ if [ ! -d $tmpdir ]; then
   mkdir $tmpdir
 fi
 
+if [ -d "$targetdir/cache" ] ; then
+  cp -r "$targetdir/cache" "$tmpdir/"
+fi
+
 # Copy src dir
 cp -r $srcdir/* $tmpdir/
 cp scripts/render.R $tmpdir/render.R
