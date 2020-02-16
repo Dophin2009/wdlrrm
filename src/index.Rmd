@@ -39,6 +39,10 @@ TeX comes in many different distributions
 
 Full installation might be up to ~6 GB
 
+Install more packages from the CTAN (Comprehensive TeX Archive Network)
+
+-   Use `tlmgr` with TeX Live
+
 
 # Creating a LaTeX Document {.noscroll}
 
@@ -101,7 +105,7 @@ installations.
 
 ----
 
-```{bash, results = 'hide'}
+```{bash, results = 'hide'} 
 cd docs
 xelatex example-latex.tex     # produces example-latex.pdf
 ```
@@ -113,6 +117,16 @@ pdftoppm "example-latex.pdf" "example-latex" -png
 
 ![](docs/example-latex-1.png){width=80%}
 
+# Ahh! Command Line! Scary!
+
+If you don't like/understand the command line, there are plenty of web or GUI
+applications to do compilation for you:
+
+-   Overleaf -- [overleaf.com](https://www.overleaf.com/)
+-   TeXWorks -- [tug.org/texworks](https://www.tug.org/texworks/)
+-   Papeeria -- [papeeria.com](https://papeeria.com/landing)
+-   Kile -- [kile.sourceforge.io](https://kile.sourceforge.io/)
+
 
 # Increasing Complexity
 
@@ -121,11 +135,11 @@ Here's a slightly more complicated example:
 ```{.latex include=docs/example-twocolumn.tex}
 ```
 
-```shell
-> tree --dirsfirst --charset=ascii -n docs
-  .
-  |-- example-twocolumn.tex
-  `-- xkcd-file-ext.png
+```bash
+tree --dirsfirst --charset=ascii -n docs
+.
+|-- example-twocolumn.tex
+`-- xkcd-file-ext.png
 ```
 
 ----
@@ -149,10 +163,9 @@ BibTeX is a citation data format useful for generating automatic citations
 
 -   Many, many different citation types (full list
     [bibtex.com/e/entry-types](https://www.bibtex.com/e/entry-types))
--   Use any bibliography style (with a `.csl` file)
+-   Use any bibliography style (with a `.csl` file, which is XML)
 
-
-# Citation Databases/Files
+## Citation Databases/Files
 
 Citations can be kept in a file with extension `.bib`
 
@@ -193,6 +206,7 @@ pdftoppm "example-bib.pdf" "example-bib" -png
 
 ![](docs/example-bib-1.png){width=80%}
 
+
 # MLA with BibLaTeX
 
 MLA citations can be generated using the `style=mla` option:
@@ -222,6 +236,7 @@ pdftoppm "example-bib-mla.pdf" "example-bib-mla" -png
 
 ![](docs/example-bib-mla-1.png){width=80%}
 
+
 # Toning Down the Complexity
 
 Sometimes you might not need that much control or complexity
@@ -241,7 +256,7 @@ A simple markup language for writing documents that require simple formatting
 -   Many parsers to transform markdown into HTML, PDF, DVI, etc.
 
 
-# Example
+## Example
 
 Very basic syntax that should be unviersal across most markdown processors
 
@@ -327,15 +342,52 @@ pdftoppm "example-markdown.pdf" "example-markdown" -png
 ![](docs/example-markdown-1.png){width=65%}
 
 
+# Passing Arguments to Pandoc
+
+Pandoc can read in many properties to customize the output
+
+The simplest way is to pass them in as command line arguments:
+
+```bash
+# Use xelatex instead of pdflatex
+pandoc example-markdown.md -o example-markdown.pdf --pdf-engine=xelatex
+# Table of contents, numbered sections, code highlighting color scheme
+pandoc example-markdown.md -o example-markdown.pdf --toc --number-sections --highlight-style=pygments
+```
+
+
 # Pandoc Markdown
 
 Pandoc has its own flavor of markdown that greatly expands on upon basic syntax
 
 -   Optionally enable and disable features when compiling
 
+## YAML Header
+
+A header block of YAML can set properties for the file instead of passing them
+as command line arguments; for example:
+
+-   PDF engine (`pdflatex`, `xelatex`, `lualatex`, etc.)
+-   Template file to use
+-   Table of contents and depth
+-   Bibliography files and options
+-   Math rendering method
+-   ...
+
+There are many variables specific to certain types of outputs. See Pandoc
+documentation for full list.
+
+For TeX:
+
+-   Page geometry (`geometry`)
+-   Document class (`documentclass`)
+-   Paper size (`papersize`)
+-   Font style (`fontsize`, `mainfont`, `CJKmainfont`, etc.)
+-   ...
+
 ## Code Blocks
 
-Delimit code blocks with triple backticks (`\`\`\``):
+Delimit code blocks with triple backticks (\`\`\`):
 
 ````markdown
 
@@ -345,7 +397,7 @@ print("This is a code block with syntax highlighting")
 
 ````
 
-We can use tildes and give properties:
+We can also use tildes and give properties:
 
 -   Block identifier with `#identifier`
 -   Assign classes to use when rendering (`.classname`)
@@ -363,19 +415,148 @@ fn Parse(val: Option<String>) -> String {
 }
 ~~~
 
-Outside nested block!
 ```
 
-# Passing Arguments to Pandoc
+## Tables
 
-Pandoc can read in many properties to customize the output
+There are many different syntaxes that can be used to create tables
 
-The simplest way is to pass them in as command line arguments:
+Pulled straight from Pandoc's documentation:
+
+```markdown
+
+  Right     Left     Center     Default
+-------     ------ ----------   -------
+     12     12        12            12
+    123     123       123          123
+      1     1          1             1
+
+Table:  Demonstration of simple table syntax.
+
+```
+
+Using pipe syntax:
+
+```markdown
+
+| Right | Left | Default | Center |
+|------:|:-----|---------|:------:|
+|   12  |  12  |    12   |    12  |
+|  123  |  123 |   123   |   123  |
+|    1  |    1 |     1   |     1  |
+
+  : Demonstration of pipe table syntax.
+
+```
+
+## Block Quotations
+
+```markdown
+
+> insert a block quotation like this. This paragraph has two lines.
+>
+> 1.  A list item inside the block quote
+> 2.  Another item
+>
+> > Nested block quotation
+
+```
+
+
+# Here's an Example
+
+```{.markdown include=docs/example-markdown-pandoc.md}
+```
+
+----
+
+```{bash, results = 'hide'}
+cd docs
+pandoc example-markdown-pandoc.md -o example-markdown-pandoc.pdf
+```
+
+```{bash, echo = FALSE}
+cd docs
+pdftoppm "example-markdown-pandoc.pdf" "example-markdown-pandoc" -png
+```
+
+![](docs/example-markdown-pandoc-1.png){width=65%}
+
+
+# Citations in Pandoc Markdown
+
+Citation generation requires `pandoc-citeproc`, an external filter
+
+-   Specify bibliography (`.bib`) files with `bibliography` in the header
+-   Optionally, specify citation style with `csl`
+    -   Lots of CSLs in the Zotero Style Repository --
+        [zotero.org/styles](https://www.zotero.org/styles)
+-   Optionally, specify other citations with `references`
+-   Square brackets to cite something
+
+----
+
+```{.markdown include=docs/example-markdown-pandoc-bib.md}
+```
 
 ```bash
-# Use xelatex instead of pdflatex
-pandoc example-markdown.md -o example-markdown.pdf --pdf-engine=xelatex
-# Table of contents, numbered sections, code highlighting color scheme
-pandoc example-markdown.md -o example-markdown.pdf --toc --number-sections --highlight-style=pygments
+tree --dirsfirst --charset=ascii -n docs
+.
+|-- example-markdown-pandoc-bib.md
+|-- example-bib.bib
+`-- modern-language-association.csl
 ```
 
+----
+
+```{bash, results = 'hide'}
+cd docs
+pandoc --filter pandoc-citeproc -o example-markdown-pandoc-bib.pdf example-markdown-pandoc-bib.md
+```
+
+```{bash, echo = FALSE}
+cd docs
+pdftoppm "example-markdown-pandoc-bib.pdf" "example-markdown-pandoc-bib" -png
+```
+
+![](docs/example-markdown-pandoc-bib-1.png){width=75%}
+
+
+# One Step in Another Direction: R
+
+R is programming language for statistical computing
+
+-   Used widely by statisticians, data analysts, etc.
+-   Interpreted and dynamically typed language
+
+
+# Installing R
+
+Download R from the homepage of The R Project for Statistical Computing
+-- [r-project.org](https://www.r-project.org/)
+
+-   Packages available for most Linux distributions
+-   Install on Homebrew: `brew install r`
+-   Install on Chocolatey: `choco install r`
+
+Install R packages from the CRAN (Comprehensive R Archive Network)
+
+
+# R Session
+
+`R` starts a basic R session
+
+Some graphical R environments:
+
+-   RStudio -- [rstudio.com](https://rstudio.com/)
+-   R plugin for Intellij IDEA --
+    [plugins.jetbrains.com/plugin/6632-r-language-for-intellij](https://plugins.jetbrains.com/plugin/6632-r-language-for-intellij)
+-   Eclipse StatET --
+    [projects.eclipse.org/projects/science.statet](https://projects.eclipse.org/projects/science.statet)
+
+
+# Some R Basics
+
+```{r, cache = TRUE, cache.path = '../cache/'}
+1 + 1
+```
