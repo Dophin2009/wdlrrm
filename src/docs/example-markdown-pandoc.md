@@ -6,15 +6,12 @@ geometry: 'margin=3cm, bottom=3cm'
 
 ## Header {#header-identifier}
 
-`\Blindtext{1}` from the `blindtext` would produce something like
-this[^1]:
+`\Blindtext{1}` from the `blindtext` package would produce something
+like this[^1]:
 
 > Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vel
 > commodo lectus, eget pretium purus. Mauris eleifend mattis elit, nec
-> maximus turpis lacinia a. Duis mollis nibh lectus, quis vestibulum
-> massa aliquet a. Aenean in metus vel mauris tincidunt vulputate. Cras
-> scelerisque vitae urna a rutrum. Maecenas dictum placerat ligula et
-> commodo. ...
+> maximus turpis lacinia a. ...
 
 Very important data!:
 
@@ -25,6 +22,8 @@ Very important data!:
 | 1980 |     64.8 quad Btu|     28.7|          28.2|            34.2|       8.9|
 
 : Energy production by major source from 1960 to 1980
+
+$$\int_a^b \frac{1}{x} dx = \ln{b} - \ln{a}$$
 
 ## Second Header
 

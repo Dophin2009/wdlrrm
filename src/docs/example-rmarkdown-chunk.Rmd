@@ -1,0 +1,18 @@
+---
+geometry: margin=3cm
+output: pdf_document
+---
+
+Blah blah blah...
+
+```{r, eval = FALSE}
+print("This won't be evaluated, but we can still see the code")
+```
+
+```{r, echo = FALSE}
+print("The source code that produced this output isn't outputed")
+```
+
+```{r, results = 'hide'}
+print("We can see the source code, but not the result")
+```

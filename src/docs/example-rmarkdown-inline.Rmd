@@ -1,0 +1,10 @@
+---
+geometry: margin=3cm
+output: pdf_document
+---
+
+```{r}
+i <- 590982
+```
+
+Here's some text. Now, we want to put the number $i =$ `r i` in our text.

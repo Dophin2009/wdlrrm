@@ -21,7 +21,7 @@ for c in "${req_commands[@]}"; do
 done
 
 # Initial build
-$script_build
+time $script_build
 
 # Start http server
 $script_http &
@@ -31,5 +31,5 @@ inotifywait -e modify \
   -r -q -m src |
 while read ; do
   $script_clean || exit
-  $script_build
+  time $script_build
 done
