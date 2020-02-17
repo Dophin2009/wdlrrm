@@ -1056,6 +1056,7 @@ cp docs/example-rmarkdown-chunk-*.png cache/
 
 ![](docs/example-rmarkdown-chunk-1.png){width=80%}
 
+
 # Plotting
 
 Graphical plots produced will automatically be inserted as figures in the
@@ -1097,6 +1098,13 @@ cp docs/example-rmarkdown-fig-*.png cache/
 ![](docs/example-rmarkdown-fig-1.png){width=80%}
 
 
+# Data Frames as Tables
+
+Data frames can be outputted as tables with the `knitr::kable` function:
+
+
+
+
 # Other Engines
 
 `knitr` is able to support embedding code chunks in many other languages:
@@ -1109,7 +1117,7 @@ Replace `{r}` with `{language}` to use that language's engine
 
 -   Some engines require external interpreters, such as Python
 
-----
+## Using Python Instead of R
 
 Here's a Python example:
 
@@ -1159,14 +1167,115 @@ for other examples in other languages
 -   **JavaScript** - include JS to be executed within an HTML output
 -   **C** - compile C functions to be called from R
 
-# A Final Example
+[github.com/yihui/knitr-examples](https://github.com/yihui/knitr-examples) for
+an even more samples
 
-----
+## Rcpp Example
+
+A fibonacci function written in C++, compiled, and called from R
+
+````markdown
+`r ''````{Rcpp fibcpp}
+// C++ code
+#include <Rcpp.h>
+
+// [[Rcpp::export]]
+int fibonacci(const int x) {
+  if (x == 0 || x == 1)
+    return (x);
+  return (fibonacci(x - 1)) + fibonacci(x - 2);
+}
+```
+
+`r ''````{r fibtest, dependson = 'fibcpp'}
+# R code
+fibonacci(4L)
+fibonacci(10L)
+```
+````
+
+```{r, echo = FALSE, cache = TRUE}
+Rcpp::sourceCpp(code = '
+  #include <Rcpp.h>
+
+  // [[Rcpp::export]]
+  int fibonacci(const int x) {
+    if (x == 0) return(0);
+    if (x == 1) return(1);
+    return (fibonacci(x - 1)) + fibonacci(x - 2);
+  }', cacheDir = "cache"
+)
+```
+
+```{r fibtest, echo = FALSE, dependson = 'fibcpp', cache = TRUE}
+fibonacci(4L)
+fibonacci(10L)
+```
+
+
+# Sweave, RHTML, Rasciidoc
+
+`knitr` allows code chunk embedding in markup languages other than markdown as
+well
+
+-   Code chunk syntax differs a little bit for each format
+-   **Sweave** - code chunks in LaTeX (`.Rnw`)
+-   **RHTML** - code chunks in HTML (`.Rhtml`)
+-   **Rasciidoc** - code chunks in asciidoc (`.Rasciidoc`)
+
+```{.rhtml include=docs/example-rhtml.Rhtml}
+```
 
 Remember, Pandoc and R markdown aren't just limited to PDF outputs
 
 -   This reveal.js presentation was written with R markdown.
 
+
+# A Final Example
+
+A final product might look something like this:
+
+```{.markdown include=docs/finex/report.Rmd}
+```
+
+----
+
+```{r, include = FALSE}
+finex_in_hash_cache <- function(put) {
+  return(
+    in_hash_cache("docs/finex/report.Rmd", put) &&
+    in_hash_cache("docs/finex/sample.csv", put) &&
+    in_hash_cache("docs/finex/template.tex", put) &&
+    in_hash_cache("docs/finex/references.bib", put) &&
+    in_hash_cache("docs/finex/chicago.csl", put)
+  )
+}
+```
+
+```{bash, include = FALSE, eval = finex_in_hash_cache(FALSE)}
+cp -r cache/finex docs/
+cp -r cache/finex docs/
+```
+
+```{bash, include = FALSE, eval = !finex_in_hash_cache(TRUE)}
+cd docs/finex
+Rscript -e "rmarkdown::render('report.Rmd')"
+pdftoppm "report.pdf" "report" -png -f 1 -l 9
+
+cd ../..
+cp -r docs/finex cache/
+cp -r docs/finex cache/
+```
+
+![](docs/finex/report-01.png){width=60%}
+
+----
+
+![](docs/finex/report-02.png){width=60%}
+
+----
+
+![](docs/finex/report-03.png){width=60%}
 
 # Source Code
 

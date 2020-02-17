@@ -1,0 +1,601 @@
+---
+author: Eric Zhao
+bibliography: references.bib
+date: "`r format(Sys.time(), '%d %B %Y')`"
+title: "**Two Variable Data Analysis**"
+
+CJKmainfont: IPAPMincho
+csl: chicago.csl
+fontsize: "10pt"
+geometry: margin=2cm
+header-includes:
+  - \usepackage{nonfloat}
+  - \usepackage{multicol}
+  - \newcommand{\hideFromPandoc}[1]{#1}
+  - \hideFromPandoc{
+      \let\Begin\begin
+      \let\End\end
+    }
+  - \raggedcolumns
+indent: True
+linestretch: 1
+link-citations: True
+numbersections: True
+output:
+  pdf_document:
+    df_print: kable
+    fig_width: 6
+    fig_height: 4
+    fig_crop: False
+    highlight: monochrome
+    keep_tex: True
+    latex_engine: xelatex
+toc: True
+---
+
+```{r global_options, include=FALSE}
+extrafont::loadfonts()
+fulldata <- readr::read_csv("data.csv")
+data <- readr::read_csv("sample.csv")
+data <- data[order(data$Season), ]
+par(mar = c(2, 3, 0, 3), oma = c(0, 0, 0, 0), family = "CM Roman CE")
+score <- data$Score
+season <- data$Season
+
+knitr::knit_hooks$set(wrapf = function(before, options, envir) {
+  if (before) {
+    return("\\begin{minipage}{0.85\\columnwidth}\n\\mbox{}\n\\centering")
+  } else {
+    output <- vector(mode = "character", length = options$fig.num + 1)
+
+    for (i in 1:options$fig.num) {
+      output[i] <- sprintf("\\includegraphics{%s}\n\\figcaption{%s}",
+                           knitr::fig_path(number = i), options$fig.cap)
+    }
+
+    output[i + 1] <- "\\end{minipage}\\bigskip"
+    return(paste(output, collapse = ""))
+  }
+})
+```
+
+\medskip
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.2pt}}
+
+\Begin{multicols}{2}
+
+# Introduction
+
+This report attempts to analyze the correlation between time, measured by the number of
+cours since the first cour of 1980, and the score of anime, gathered from the anime
+database and community website, [MyAnimeList.net](https://myanimelist.net).
+
+## Background
+
+「アニメ」, romanized in the Hepburn system (a system for the romanization of Japanese
+using the Latin alphabet [@ref_romanization_sys]) as "anime", is defined in the
+Merriam-Webster English Dictionary as "a style of animation originating in Japan that is
+characterized by stark colorful graphics" [@ref_anime_def]. Some scholars suggest that it
+may not appropriate to refer to "anime" narrowly as an art style, but rather generally as
+animation created by Japanese artists within a Japanese context
+[@ref_anime_cross_culture]. In general usage, the word may be used to refer to a single
+production, a plural number of productions, or the medium as a whole. In this study, the
+word "show" may also be used to refer to a single anime production.
+
+There is no single definition of which productions may be classified as "anime" because
+the meaning of the word in the Japanese language describes all forms of animated media.
+Some scholars suggest that the term can be used to refer not only to animation from Japan,
+but also animated media from other nations. Others strictly limit the classification of
+anime to only Japanese animation.
+
+Discussion has been published regarding effect of anime consumption by international
+audiences in amplifying understanding and consideration across cultures
+[@ref_anime_cross_culture]. Price discusses how exposure to anime internationally has
+sparked and furthered cross-cultural interest. With the expansion of the internet, access
+and exposure to anime has increased, and many websites have developed as hubs for the
+gathering of millions of viewers across the globe.
+
+One such website, MyAnimeList.net (referred subsequently as simply "MyAnimeList"), is an
+English-speaking anime and manga database and community founded in 2006 by Garrett Gyssler
+[@ref_mal_founded]. The website maintains a database of professionally produced animation
+from Japan, Korea, China, or a mixture of those three nations. Independent works may be
+added if they pass certain qualifications. The database does not include live-action
+productions, trailers or advertisements, foreign versions of anime, or titles that have
+not been confirmed to exist [@ref_mal_db_guidelines]. The anime in the MyAnimeList are the
+anime considered in this study.
+
+The database contains a wide variety of information on each title, including synopses,
+background information, the genres of entertainment it might be considered to belong to,
+information about the producing studio(s) and domestic and international licensors,
+official artwork, per-episode information.
+
+A particular property of interest is the "season" the anime first premiered in. In
+consideration of TV anime releases, the term "season" or "cour" may be used in reference
+to approximately a single quarter, or thirteen weeks, of the year. The quarters correspond
+in general timing and name to the four natural temperate seasons. Most TV anime follow the
+schedule of weekly releases beginning on the first or second week of the season. The
+Winter season corresponds with the months of January, February, and March; the Spring
+season corresponds with April, May, and June; and so on. For example, Winter 2020 began
+shortly after the New Year in the first week of January 2020. All one cour-long (usually
+comprised of twelve episodes) will likely finish airing by the start of Spring 2020, which
+will begin at the start of April 2020. Some shows may begin release in special premieres
+before the start of the season, but since most of the episodes air within the season, the
+show is considered to premiere in that season.
+
+Registered users on the MyAnimeList platform may add anime that they have watched or plan
+to watch on their personal list. Adding anime they have watched typically entails the
+attachment of an arbitrary, unitless score to that particular title. This score must be an
+integer from $1$ to $10$, inclusive, where $10$ typically means that the user regards the
+show as a masterpiece, and $1$, that the user regards the show as part of the lowest tier
+of anime. Users may also post a review for the show describing the rationale for the score
+they assign. MyAnimeList calculates and displays an aggregate score for each anime, a
+decimal value rounded to two places when displayed, based off user scores, the number of
+users who have scored the title, and a number of other variables [@ref_mal_score_calc].
+
+# Data
+
+The population considered consists of all the anime in the MyAnimeList database that
+satisfy the requirements outlined below. The Jikan API [@ref_jikan_api], a public,
+unofficial MyAnimeList JSON API, was queried by a script to retrieve and automatically
+filter anime data from MyAnimeList. The final population set has `r nrow(fulldata)`
+titles.
+
+The data set analyzed is a simple random sample of `r nrow(data)` anime selected from the
+population. For these anime, the relationship between time, the explanatory variable, and
+MyAnimeList aggregate score, the response variable, is examined.
+
+## Format
+
+Time is considered in units of seasons. In the data, the premiere season for each show is
+represented as the number of seasons since Winter 1980. For example, Spring 2011 would be
+represented by the number `r (4 * 2011 + 1) - (4 * 1980)`.
+
+The aggregate score value is the same hundredths-rounded decimal displayed on MyAnimeList.
+
+## Requirements
+
+\noindent
+**Aggregate score** The listing must be given an aggregate score. Listings with no
+aggregate scores are filtered out. MyAnimeList omits aggregate scores for anime that fail
+certain requirements [@ref_mal_score_calc]. These include shows that have not yet been
+released or are rated R18+.[^1]
+
+\noindent
+**Airing status** Anime that have not finished airing are not included. Scores are likely
+to fluctuate as the show is airing and usually stabilize after users input their final
+scores.
+
+\noindent
+**Number of scores** The listing must have been scored by 1500 or more users. This is to
+include only shows exposed to a sufficiently significant audience.
+
+## Sampling Process
+
+Each of the anime in the population was assigned an integer identifier from $0$ to
+`r nrow(data)-1` in order of MyAnimeList rank, separate from the existing MyAnimeList
+database identifier. `r nrow(data)` unique integers in the range [0,`r nrow(data)-1`] were
+generated using a random number generator. Those anime whose assigned identifiers matched
+the generated integers were chosen to be included in the sample. The sampling process was
+performed in a script.[^2]
+
+## Limitations
+
+Consideration of the data as a real reflection of the MyAnimeList userbase's opinion is
+subject to a number of limitations.
+
+Firstly, only the opaque aggregate score value calculated by the MyAnimeList website is
+considered. The value is a weighted combination of individual scores selected by different
+users who may apply varied scoring scales and criteria.
+
+Secondly, not all users have watched and scored all the anime. Because of licensing and
+availability, as well as the simple question of time, it is essentially impossible to
+assume so. Therefore, each the scores will represent only a subset of all the users on
+MyAnimeList.
+
+# Analysis
+
+```{r consts, message = FALSE, echo = FALSE}
+xlbl <- "Seasons since Winter 1980"
+ylbl <- "Aggregate Score"
+mainsize <- 0.8
+lblsize <- 1.2
+axissize <- 1.2
+ptsize <- 0.6
+```
+
+## Scatter Plot
+
+All data points in the sample are plotted (see Figure \ref{scatter}). As the season value
+becomes greater, representing more recent seasons, the aggregate score values become more
+varied.
+
+```{r scatterplot, message = FALSE, echo = FALSE, wrapf = TRUE, fig.show = 'hide', fig.cap = "Aggregate Scores over Seasons Scatter \\label{scatter}"}
+plot(x = season, y = score,
+     ylim = c(floor(min(score)), 10),
+     main = "", xlab = xlbl, ylab = ylbl,
+     cex.main = mainsize, cex.lab = lblsize, cex.axis = axissize,
+     cex = ptsize
+)
+```
+
+\noindent Since there exists a direct relationship between how recent the season is and
+the number of anime (see Figure \ref{seasonhisto}), this is rather unsurprising. There
+does not appear to be any kind of strong relationship between the two variables.
+
+```{r season_histogram, message = FALSE, echo = FALSE, wrapf = TRUE, fig.show = 'hide', fig.cap = "Frequency of Anime in Seasons \\label{seasonhisto}"}
+season_range <- range(season)
+hist(season,
+     breaks = seq(0, season_range[2], season_range[2] / 30),
+     main = "", xlab = xlbl, ylab = "Frequency",
+     cex.main = mainsize, cex.lab = lblsize, cex.axis = axissize,
+     cex = ptsize
+)
+```
+
+## Linear Model
+
+```{r regeq, message = FALSE, echo = FALSE}
+regeq <- function(summary, x) {
+  slope <- summary$coefficients[2]
+  yint <- summary$coefficients[1]
+  return(sprintf("$\\hat{y} = %s %.3f %s %s %.3f$",
+                     if (slope < 0) "" else "+",
+                     slope,
+                     x,
+                     if (yint < 0) "" else "+",
+                     yint))
+}
+
+```
+
+```{r lin_regression, message = FALSE, echo = FALSE}
+linreg <- lm(score ~ season)
+linreg_summary <- summary(linreg)
+
+linreg_slope <- linreg_summary$coefficients[2]
+linreg_yint <- linreg_summary$coefficients[1]
+linreg_rsq <- linreg_summary$r.squared
+linreg_r <- sqrt(linreg_rsq)
+
+linreg_eq <- regeq(linreg_summary, "x")
+```
+
+A least-squares regression line is calculated and laid over the scatter plot (see Figure
+\ref{scatterlinreg}). The LSRL is represented by the equation `r linreg_eq`, where
+$\hat{y}$ represents the predicted aggregate score and $x$ represents the number of
+seasons since Winter 1980. The model predicts the score for anime that premiere in Winter
+1980 to be `r sprintf("$%.3f$", linreg_yint)`. For every increase in the number of seasons
+since Winter 1980 by $1$, the LSRL states that the aggregate MyAnimeList score will
+`r if (linreg_slope < 0) "decrease" else "increase"` by
+`r sprintf("$%.3f$", abs(linreg_slope))`.
+
+```{r scatterplot_regression, message = FALSE, echo = FALSE, wrapf = TRUE, fig.show = 'hide', fig.cap = "Aggregate Scores with Linear Model \\label{scatterlinreg}"}
+plot(x = season, y = score,
+     ylim = c(floor(min(score)), 10),
+     main = "", xlab = xlbl, ylab = ylbl,
+     cex.main = mainsize, cex.lab = lblsize, cex.axis = axissize,
+     cex = ptsize
+)
+abline(linreg)
+```
+
+\noindent However, the $r$ value of the model is `r sprintf("$%.3f$", linreg_r)`,
+suggesting a minimal linear relationship between the MyAnimeList aggregate score and the
+number of seasons since Winter 1980 and the aggregate score. The $r^2$ value is
+`r sprintf("$%.3f$", linreg_rsq)`, meaning that `r sprintf("$%.3f$", 100 * linreg_rsq)`
+percent of the variation in the score can be explained by the LSRL between the number of
+seasons since Winter 1980 and the aggregate score; the $r^2$ value indicates a very weak
+linear relationship between the two variables.
+
+The residual plot (see Figure \ref{residuallinreg}) also suggests a weak linear
+relationship; the residuals are not in uniformly random scatter around the horizon.
+
+```{r residual_linear, message = FALSE, echo = FALSE, wrapf = TRUE, fig.show = 'hide', fig.cap = "Residual Plot of Linear Model \\label{residuallinreg}"}
+linreg_resid <- resid(linreg)
+plot(x = season, y = linreg_resid,
+     main = "", xlab = xlbl, ylab = "Residual",
+     cex.main = mainsize, cex.lab = lblsize, cex.axis = axissize,
+     cex = ptsize
+)
+abline(0, 0)
+```
+\noindent Thus, no strong linear relationship between the variables is concluded.
+
+## Logarithmic Model
+
+```{r, message = FALSE, echo = FALSE}
+logreg <- lm(score ~ log(season))
+logreg_summary <- summary(logreg)
+logreg_slope <- logreg_summary$coefficients[2]
+logreg_yint <- logreg_summary$coefficients[1]
+logreg_rsq <- logreg_summary$r.squared
+logreg_eq <- regeq(logreg_summary, "\\ln{x}")
+```
+
+In addition to the linear model, a logarithmic model, using the transformation
+$x_{new} = \ln{x}$ was calculated for the data, where $x$ is the explanatory variable. The
+model is represented by the equation `r logreg_eq` (see Figure \ref{scatterlogreg}), where
+$\hat{y}$ is the predicted aggregate score, suggesting that with every increase in the
+value of $\ln{x}$ by $1$, the value of $\hat{y}$
+`r if (logreg_slope < 0) "decreases" else "increases"` by
+`r sprintf("$%.3f$", abs(logreg_slope))`. It predicts that an anime released in Winter
+1980 would have a score of `r sprintf("$%.3f$", logreg_yint)`.
+
+The model has an $r$ value of `r sprintf("$%.3f$", sqrt(logreg_rsq))` and $r^2$ value of
+`r sprintf("$%.3f$", logreg_rsq)`, meaning `r sprintf("$%.3f$", 100 * logreg_rsq)` percent
+of the variation in the aggregate score can be explained by the LSRL between the season
+value and the aggregate score.
+
+```{r, message = FALSE, echo = FALSE, wrapf = TRUE, fig.show = 'hide', fig.cap = "Aggregate Scores with Logarithmic Model \\label{scatterlogreg}"}
+plot(x = season, y = score,
+     ylim = c(floor(min(score)), 10),
+     main = "", xlab = xlbl, ylab = ylbl,
+     cex.main = mainsize, cex.lab = lblsize, cex.axis = axissize,
+     cex = ptsize
+)
+
+range <- range(season)
+xvals <- seq(range[1], range[2], len = length(score))
+lines(xvals, predict(logreg, newdata = data.frame(xvals)))
+```
+
+\noindent The residual plot is shown in Figure \ref{residlogreg}. The residual plots for
+the linear model and logarithmic model are very similar. The correlation coefficients and
+coefficients of determination for both models suggest that they are both weak models.
+
+```{r, message = FALSE, echo = FALSE, wrapf = TRUE, fig.show = 'hide', fig.cap = "Residual Plot of Logarithmic Model \\label{residlogreg}"}
+logreg_resid <- resid(logreg)
+plot(x = season, y = logreg_resid,
+     main = "", xlab = xlbl, ylab = "Residual",
+     cex.main = mainsize, cex.lab = lblsize, cex.axis = axissize,
+     cex = ptsize
+)
+abline(0, 0)
+```
+
+## Prediction
+
+The correlation coefficients and coefficients of determination for the two models
+considered suggest that the logarithmic model is a slightly worse fit for the data.
+
+Problematically, the data exhibits heteroskedasticity, meaning the variation in the
+response variable variable is nonconstant over the values of the explanatory variable
+[@ref_heteroskedasticity]. In the case of the data, the variation in the aggregate score
+values increases as the value for the number of seasons since Winter 1980 increases. As
+evidenced in the scatter plot, small values of the latter variable result in small scatter
+in the former variable, whereas large values of the latter variable yield large scatter in
+the former variable.
+
+The presence of heteroskedasticity can be verified using the Breusch-Pagan test
+[@ref_rectify_heteroskedasticity]. The test was run using the `ncvTest()` function from
+the R package `car` [@ref_r_pkg_car]. The output is shown below.
+
+```{r ncvtest}
+car::ncvTest(linreg)
+```
+
+\noindent The p-value result from the chi-squared test is less than $0.05$; thus, the null
+hypothesis that the data is homoskedastic is rejected and heteroskedasticity is inferred.
+
+Because of the heteroskedastic nature of the data, the predictive accuracy of the model
+likely decreases as greater explanatory variable values are used to predict the aggregate
+score for anime premiering in that season. Nonetheless, an attempt will be made at using
+the linear model to produce both interpolative and extrapolative aggregate score
+predictions.
+
+### Interpolative Prediction
+
+```{r, message = FALSE, echo = FALSE}
+linreg_eval <- function(x) {
+  linreg_yint + linreg_slope * x
+}
+
+inter_low_x <- 2 + 1995 * 4 - (1980 * 4)
+inter_low_y <-  linreg_eval(inter_low_x)
+```
+
+An interpolative prediction for the score of an anime released in Summer 1995, with $x =$
+`r sprintf("$%d$", inter_low_x)`, was made. The predicted aggregate score value is
+`r regeq(linreg, sprintf("(%d)", inter_low_x))` $=$ `r sprintf("$%.3f$", inter_low_y)`,
+which is not too far from the scores of many anime that aired that season, though that
+cannot necessarily be attributed to the accuracy of the prediction.
+
+### Extrapolative Prediction
+
+```{r, message = FALSE, echo = FALSE}
+astro_boy_x <- 1963 * 4 - (1980 * 4)
+astro_boy_y <- linreg_eval(astro_boy_x)
+
+future_x <- 2050 * 4 - (1980 * 4)
+future_y <- linreg_eval(future_x)
+```
+
+Often miscredited as the first television anime series, *Tetsuwan Atom*, more commonly
+known in the English-speaking community as *Astro Boy*, premiered on January 1, 1963
+[@ref_astro_boy_miscredit]. With $x =$ `r sprintf("$%d$", astro_boy_x)`, the linear model
+predicts that MyAnimeList aggregate score for *Tetsuwan Atom* to be
+`r regeq(linreg, sprintf("(%d)", astro_boy_x))` $=$ `r sprintf("$%.3f$", astro_boy_y)`.
+*Tetsuwan Atom* has in reality garnered a lower score on the website of $7.23$.
+
+Another data point to extrapolate is perhaps the MyAnimeList aggregate score of some title
+released in the future. With $x =$ `r sprintf("$%d$", future_x)`, the model predicts that
+the aggregate score for some anime premiering in Winter 2050 to be
+`r regeq(linreg, sprintf("(%d)", future_x))` $=$ `r sprintf("$%.3f$", future_y)`.
+However, the shape of the scatter indicates that the scores for anime in Winter 2050 would
+encompass a wide range of values.
+
+## Conclusions
+
+One goal of the study was to examine if users in the MyAnimeList community on average have
+a higher opinion of older anime---those that might be considered "classics"---than more
+recent releases. While the linear model suggests a negative trend in aggregate scores over
+time, the overall change over time is minimal. Furthermore, it is difficult to attribute
+this strictly to MyAnimeList users' preference for anime from the 1980's and 1990's that
+many might consider as classics. The limitations of the data discussed previously apply.
+Particularly, it is likely and significant that newer viewers of anime have not watched at
+all or as many older anime. Another important factor is that anime has become and is
+becoming more mainstream, and production of it, more widepsread (and therefore having
+greater variation in quality) [@ref_anime_rec_ann]; thus it makes sense that the variation
+in scores increases with time.
+
+Besides the variation in MyAnimeList aggregate score being directly proportional to the
+number of seasons since Winter 1980 anime premiere in, there not does appear to be any
+kind of strong relationship between the values of the explanatory and response variables.
+
+### Further Research Possibilities
+
+The study provided an example of data where definitive conclusions are not easy to derive
+from. Further research could be done to perhaps consider and capture the sentiment of
+written user reviews and other factors to more accurately examine the change in user
+perceptions of anime over time.
+
+\End{multicols}
+
+\newpage
+\newgeometry{margin=4cm}
+
+# Appendix
+
+## Appendix A: Scripts {#appendix-a}
+
+### Sampling Script
+
+The sampling script is written in Go, an open-source, general-purpose programming language
+created by developers at Google [@ref_golang].
+
+\small
+\setstretch{0.8}
+
+~~~~~~{#sample-selector .go .numberLines}
+package main
+
+import (
+  "bytes"
+  "encoding/csv"
+  "math/rand"
+  "os"
+  "strconv"
+  "time"
+)
+
+func main() {
+  file, err := os.Open("data.csv")
+  if err != nil {
+    panic(err)
+  }
+  defer file.Close()
+
+  r := csv.NewReader(file)
+
+  nfile, err := os.Create("sample.csv")
+  if err != nil {
+    panic(err)
+  }
+  w := csv.NewWriter(nfile)
+  defer w.Flush()
+
+  w.Write([]string{"ID", "Title", "Rank", "Score", "ScoredBy",
+    "Popularity", "Members", "Favorites", "Season", "Episodes"})
+
+  data, err := r.ReadAll()
+  if err != nil {
+    panic(err)
+  }
+  data = data[1:]
+
+  seed := rand.NewSource(time.Now().UnixNano())
+  rng := rand.New(seed)
+
+  max := len(data)
+
+  for i := 0; i < 2000; i++ {
+    n := rng.Intn(max)
+    row := data[n]
+
+    if len(row[8]) != 5 {
+      i--
+    } else {
+      parts := splitSubN(row[8], 4)
+      year, err := strconv.Atoi(parts[0])
+      if err != nil {
+        panic(err)
+    }
+      sn, err := strconv.Atoi(parts[1])
+      if err != nil {
+        panic(err)
+      }
+
+      v := (4*year + sn - 1) - (4 * 1915)
+      if v < 0 {
+        i--
+        continue
+      }
+      row[8] = strconv.Itoa(v)
+
+      w.Write(row)
+    }
+  }
+}
+
+func splitSubN(s string, n int) []string {
+  sub := ""
+  subs := []string{}
+
+  runes := bytes.Runes([]byte(s))
+  l := len(runes)
+  for i, r := range runes {
+    sub = sub + string(r)
+    if (i+1)%n == 0 {
+      subs = append(subs, sub)
+      sub = ""
+    } else if (i + 1) == l {
+      subs = append(subs, sub)
+    }
+  }
+
+  return subs
+}
+~~~~~~
+
+\normalsize
+\setstretch{1}
+
+## Appendix B: Sample Data {#appendix-b}
+
+\setstretch{0.9}
+
+```{r data_display, echo = FALSE, message = FALSE}
+df <- data.frame(ID = data$ID, Title = data$Title,
+                 Score = data$Score, Season = data$Season)
+trim <- function(x) gsub("^\\s+|\\s+$", "", x)
+df["Title"] <- unlist(Map({
+  function(s) {
+    if (nchar(as.character(trim(s))) > 53) {
+      s <- paste(substr(trim(s), 0, 50), "...", sep = "")
+    } else {
+      s <- paste(s)
+    }
+    s
+  }
+}, df$Title))
+
+
+knitr::kable(df, "pandoc",
+             col.names = c("ID [^3]", "Title[^4]",
+                           "Score[^5]", "Season [^6]"),
+             align = c("r", "l", "l", "l")
+)
+```
+
+[^1]: Otherwise, the data set has not been audited to remove
+    potentially questionable titles.
+
+[^2]: See [Appendix A](#appendix-a).
+
+[^3]: MyAnimeList database identifier.
+
+[^4]: Titles have been truncated to 50 characters.
+
+[^5]: MyAnimeList aggregate score.
+
+[^6]: Number of seasons since Winter 1980.
