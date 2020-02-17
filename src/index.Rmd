@@ -695,9 +695,13 @@ Install R packages from the CRAN (Comprehensive R Archive Network)
 
 R code can be written in an `.R` file; run with `Rscript file.R`
 
+
+# Ahh! Command Line! Scary!
+
 Some graphical R environments:
 
 -   RStudio -- [rstudio.com](https://rstudio.com/)
+    -   Especially good for R markdown
 -   R plugin for Intellij IDEA --
     [plugins.jetbrains.com/plugin/6632-r-language-for-intellij](https://plugins.jetbrains.com/plugin/6632-r-language-for-intellij)
 -   Eclipse StatET --
