@@ -1,0 +1,30 @@
+---
+geometry: margin=3cm
+output: pdf_document
+---
+
+# Lorem ipsum
+
+As shown in Figure 1, we have come across some very groundbreaking findings.
+
+Aliquam molestias quo distinctio id ipsa aut. Optio error et iure dolorem
+ducimus velit aliquam. Inventore et aliquid facilis.
+
+```{r, echo = FALSE, fig.cap = "Histogram of Some Data", fig.width = 4.25, fig.height = 3}
+data <- read.csv("sample-data.csv")
+df <- data.frame(score = data$Score, scored_by = data$ScoredBy)
+df <- df[order(df$scored_by), ]
+
+hist(df$score, breaks = seq(3, 10, 0.25),
+     main = "", xlab = "Some Data", ylab = "Frequency",
+     col = "lightgrey", cex.main = 0.6, cex.axis = 0.75, cex.lab = 0.75
+)
+```
+
+Est et dolore illum modi. Est laudantium sint alias. Dolorem possimus rerum est
+ut sed molestiae. Quo ut in numquam rerum non accusamus fugit. Sapiente
+provident quod quia similique.
+
+Et unde fuga sit vero magnam eaque mollitia dolorum. At et dolor tenetur
+molestiae. Ut dolorem et iste omnis nesciunt facere accusantium. Soluta earum
+voluptatem quas sint ut. Magni maxime et doloremque et est.

@@ -1,0 +1,10 @@
+---
+geometry: margin=3cm
+output: pdf_document
+---
+
+```{python}
+import matplotlib.pyplot as plt
+plt.plot([0, 2, 1, 4])
+plt.show()
+```

@@ -441,6 +441,12 @@ pandoc example-markdown.md -o example-markdown.pdf
 ![](docs/example-markdown-1.png){width=65%}
 
 
+# Ahh! Command Line! Scary!
+
+There don't seem be any graphical interfaces dedicated to Pandoc, but you can
+try searching for Pandoc-related extensions for your favorite code/text editor.
+
+
 # Passing Arguments to Pandoc
 
 Pandoc can read in many properties to customize the output
@@ -1052,16 +1058,117 @@ cp docs/example-rmarkdown-chunk-*.png cache/
 
 # Plotting
 
+Graphical plots produced will automatically be inserted as figures in the
+output
+
+There are lots of figure-specific chunk options
+
+-   `fig.cap` can be used to set the image caption for the figure output
+-   `fig.width` and `fig.height` set the figure height and width, in inches
+-   `out.width` and `out.height` scale the outputted figure to the given
+    dimensions
+
+----
+
+```{.markdown include=docs/example-rmarkdown-fig.Rmd}
+```
+
+```r
+rmarkdown::render("example-rmarkdown-fig.Rmd")
+```
+
+```{bash, include = FALSE, eval = in_hash_cache("docs/example-rmarkdown-fig.Rmd", FALSE)}
+cp cache/example-rmarkdown-fig.pdf docs/
+cp cache/example-rmarkdown-fig-*.png docs/
+```
+
+```{bash, include = FALSE, eval = !in_hash_cache("docs/example-rmarkdown-fig.Rmd", TRUE)}
+cd docs
+Rscript -e "rmarkdown::render('example-rmarkdown-fig.Rmd')"
+pdftoppm "example-rmarkdown-fig.pdf" "example-rmarkdown-fig" -png
+
+cd ..
+cp docs/example-rmarkdown-fig.pdf cache/
+cp docs/example-rmarkdown-fig-*.png cache/
+```
+
+----
+
+![](docs/example-rmarkdown-fig-1.png){width=80%}
+
 
 # Other Engines
 
+`knitr` is able to support embedding code chunks in many other languages:
+
+```{r, collapse = TRUE, attr.source = c('.numberLines'), cache = TRUE}
+names(knitr::knit_engines$get())
+```
+
+Replace `{r}` with `{language}` to use that language's engine
+
+-   Some engines require external interpreters, such as Python
+
+----
+
+Here's a Python example:
+
+````markdown
+`r ''````{python}
+s = 'Hello World!'
+print(s)
+```
+````
+
+You can even use libraries like matplotlib in Python to draw plots:
+
+````markdown
+`r ''````{python}
+import matplotlib.pyplot as plt
+plt.plot([0, 2, 1, 4])
+plt.show()
+```
+````
+
+```{bash, include = FALSE, eval = in_hash_cache("docs/example-rmarkdown-python.Rmd", FALSE)}
+cp cache/example-rmarkdown-python.pdf docs/
+cp cache/example-rmarkdown-python-*.png docs/
+```
+
+```{bash, include = FALSE, eval = !in_hash_cache("docs/example-rmarkdown-python.Rmd", TRUE)}
+cd docs
+Rscript -e "rmarkdown::render('example-rmarkdown-python.Rmd')"
+pdftoppm "example-rmarkdown-python.pdf" "example-rmarkdown-python" -png
+
+cd ..
+cp docs/example-rmarkdown-python.pdf cache/
+cp docs/example-rmarkdown-python-*.png cache/
+```
+
+----
+
+![](docs/example-rmarkdown-python-1.png){width=80%}
+
+## Other Possibilities
+
+See [bookdown.org/yihui/rmarkdown/language-engines.html](https://bookdown.org/yihui/rmarkdown/language-engines.html)
+for other examples in other languages
+
+-   **SQL** - open a SQL database connection and make queries
+-   **Rcpp** - compile C++ into R functions (not limited to `knitr`)
+-   **JavaScript** - include JS to be executed within an HTML output
+-   **C** - compile C functions to be called from R
 
 # A Final Example
 
+----
+
+Remember, Pandoc and R markdown aren't just limited to PDF outputs
+
+-   This reveal.js presentation was written with R markdown.
+
 
 # Source Code
-
-This reveal.js presentation was written with R markdown.
 
 The source code can be found on GitHub at
 [github.com/Dophin2009/rmdpresentation](https://github.com/Dophin2009/rmdpresentation)
