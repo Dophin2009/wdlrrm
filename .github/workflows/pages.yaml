@@ -3,58 +3,75 @@ name: pages
 on: [push]
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: install-r
-        uses: r-lib/actions/setup-r@v1
-
-      - name: install-pandoc
-        uses: r-lib/actions/setup-pandoc@v1
-
-      - name: install-tex
-        uses: r-lib/actions/setup-tinytex@v1
-
-      - name: install-pandoc-citeproc
-        run: cabal install pandoc-citeproc
-
-      - name: install-pandoc-include-code
-        run: cabal install pandoc-include-code
-
-      - name: install-sassc
-        run: |
-          cd /usr/local/lib/
-          sudo git clone https://github.com/sass/sassc.git --branch 3.4.2 --depth 1
-          sudo git clone https://github.com/sass/libsass.git --branch 3.4-stable --depth 1
-          sudo git clone https://github.com/sass/sass-spec.git --depth=1
-          echo 'SASS_LIBSASS_PATH="/usr/local/lib/libsass"' | sudo tee -a /etc/environment
-          source /etc/environment
-          sudo make -C libsass
-          sudo make -C sassc
-          sudo make -C sassc install
-
-  build:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: build
-        run: make build
-
   publish:
     runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: clean-build
+      - name: apt update
+        run: sudo apt-get update
+
+      - name: Install R
+        uses: r-lib/actions/setup-r@v1
+
+      - name: Install Pandoc
+        uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Install pandoc-citeproc
+        run: sudo apt-get install pandoc-citeproc
+
+      - name: Install pandoc-include-code
+        run: |
+          wget https://github.com/owickstrom/pandoc-include-code/releases/download/v1.2.0.2/pandoc-include-code-linux-ghc8-pandoc-1-19.tar.gz
+          tar xzf pandoc-include-code-linux-ghc8-pandoc-1-19.tar.gz
+          sudo mv pandoc-include-code /usr/bin/
+
+      - name: Install TinyTeX
+        uses: r-lib/actions/setup-tinytex@v1
+
+      - name: Cache TeX packages
+        uses: actions/cache@v1
+        with:
+          path: ~/texmf
+          key: ${{runner.os}}-tex-pkgs
+
+      - name: Install TeX packages
+        run: |
+          mkdir -p ~/texmf
+          tlmgr init-usertree
+          sudo apt-get install biber
+          tlmgr install biblatex biblatex-mla biblatex-chicago blindtext epstopdf-pkg fancyhdr lm mdwtools nonfloat xcolor
+
+      - name: Cache R libs
+        uses: actions/cache@v1
+        with:
+          path: ~/work/_temp/Library
+          key: ${{runner.os}}-r-libs
+
+      - name: Install R packages
+        run: Rscript -e "install.packages(c('rmarkdown', 'revealjs', 'readr', 'hashmap', 'reticulate'))"
+
+      - name: Install Python packages
+        run: sudo pip3 install matplotlib
+
+      - name: Install sassc
+        run: sudo apt-get install sassc
+
+      - name: Install poppler-utils
+        run: sudo apt-get install poppler-utils
+
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Build
+        run: make build
+
+      - name: Clean build directory
         run: |
           cd build
           rm -rf cache
           rm -rf index_files
           rm -rf tmp
 
-      - name: deploy
+      - name: Deploy to pages
         if: success()
         uses: crazy-max/ghaction-github-pages@v1
         with:

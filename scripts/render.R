@@ -1,4 +1,4 @@
-#!/bin/Rscript
+#!/usr/bin/env Rscript
 req_packages <- c("rmarkdown", "revealjs")
 for (pkg in req_packages) {
   if (!require(pkg, character.only = TRUE)) {

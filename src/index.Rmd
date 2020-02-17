@@ -1106,7 +1106,15 @@ cp docs/example-rmarkdown-fig-*.png cache/
 
 Data frames can be outputted as tables with the `knitr::kable` function:
 
-
+````markdown
+`r ''````{r}
+df <- read.csv("some-data.csv")
+knitr::kable(df, "pandoc",
+             col.names = c("A", "B", "C", "D"),
+             align = c("r", "l", "l", "l")
+)
+```
+````
 
 
 # Other Engines
