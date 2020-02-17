@@ -16,10 +16,10 @@ output:
     transition: fade
 ---
 
-```{r check_pkgs, code = readLines("check_pkgs.R")}
+```{r check_pkgs, include = FALSE, code = readLines("check_pkgs.R")}
 ```
 
-```{r cache_funs, code = readLines("cache.R")}
+```{r cache_funs, include = FALSE, code = readLines("cache.R")}
 ```
 
 ```{bash, include = FALSE, eval = in_hash_cache("styles.scss", FALSE)}
