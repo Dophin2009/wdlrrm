@@ -22,5 +22,3 @@ A list of items:
 -   Three
     -   Three and some more
 -   Four
-
-![Image!](./xkcd-file-ext.png)
