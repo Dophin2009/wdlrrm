@@ -448,6 +448,7 @@ We can convert it to PDF:
 
 -   Markdown is first converted to TeX
 -   `pdflatex`, by default, converts to TeX to PDF
+-   A TeX installation is required
 
 ----
 
@@ -625,8 +626,11 @@ prefix "Figure X"
 Blah blah blah...
 
 ![We can put a caption here!](path/to/some/image)
-
 ```
+
+Check out the Pandoc manual
+([https://pandoc.org/MANUAL.html](https://pandoc.org/MANUAL.html))
+for more on Pandoc's capabilities
 
 
 # Here's an Example
