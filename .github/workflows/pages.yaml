@@ -6,7 +6,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: apt update
+      - name: Update apt list
         run: sudo apt-get update
 
       - name: Install R
@@ -45,9 +45,6 @@ jobs:
         with:
           path: ~/work/_temp/Library
           key: ${{runner.os}}-r-libs
-
-      - name: Install R packages
-        run: Rscript -e "install.packages(c('rmarkdown', 'revealjs', 'readr', 'hashmap', 'reticulate'))"
 
       - name: Install Python packages
         run: sudo pip3 install matplotlib
