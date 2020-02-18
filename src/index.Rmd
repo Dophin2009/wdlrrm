@@ -408,6 +408,9 @@ cp docs/example-markdown.html cache/
 pandoc -s example-markdown.md -o example-markdown.html
 ```
 
+```{.html include=docs/example-markdown.html}
+```
+
 
 # Converting to TeX
 
@@ -475,12 +478,6 @@ pandoc example-markdown.md -o example-markdown.pdf
 ![](docs/example-markdown-1.png){width=65%}
 
 
-# Ahh! Command Line! Scary!
-
-There don't seem be any graphical interfaces dedicated to Pandoc, but you can
-try searching for Pandoc-related extensions for your favorite code/text editor.
-
-
 # Passing Arguments to Pandoc
 
 Pandoc can read in many properties to customize the output
@@ -493,6 +490,12 @@ pandoc example-markdown.md -o example-markdown.pdf --pdf-engine=xelatex
 # Table of contents, numbered sections, code highlighting color scheme
 pandoc example-markdown.md -o example-markdown.pdf --toc --number-sections --highlight-style=pygments
 ```
+
+
+# Ahh! Command Line! Scary!
+
+There don't seem be any graphical interfaces dedicated to Pandoc, but you can
+try searching for Pandoc-related extensions for your favorite code/text editor.
 
 
 # Pandoc Markdown
