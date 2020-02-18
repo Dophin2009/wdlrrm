@@ -16,9 +16,6 @@ output:
     transition: fade
 ---
 
-```{r check_pkgs, include = FALSE, code = readLines("check_pkgs.R")}
-```
-
 ```{r cache_funs, include = FALSE, code = readLines("cache.R")}
 ```
 

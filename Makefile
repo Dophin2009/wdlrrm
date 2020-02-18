@@ -5,11 +5,11 @@ default: build
 build: clean
 	scripts/build.sh
 
-http: build
-	scripts/http.sh
+serve: build
+	scripts/serve.sh "build"
 
-serve: clean
-	scripts/serve.sh
+serve_watch: build
+	scripts/serve_watch.sh "build"
 
 clean:
 	scripts/clean.sh
