@@ -12,6 +12,18 @@ jobs:
       - name: Install R
         uses: r-lib/actions/setup-r@v1
 
+      - name: Cache R libs
+        uses: actions/cache@v1
+        with:
+          path: ~/work/_temp/Library
+          key: ${{runner.os}}-r-libs
+
+      - name: Cache pip packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{runner.os}}-pip-pkgs
+
       - name: Install Pandoc
         uses: r-lib/actions/setup-pandoc@v1
 
@@ -39,12 +51,6 @@ jobs:
           tlmgr init-usertree
           sudo apt-get install biber
           tlmgr install biblatex biblatex-mla biblatex-chicago blindtext epstopdf-pkg fancyhdr lm mdwtools nonfloat xcolor
-
-      - name: Cache R libs
-        uses: actions/cache@v1
-        with:
-          path: ~/work/_temp/Library
-          key: ${{runner.os}}-r-libs
 
       - name: Install Python packages
         run: sudo pip3 install matplotlib
