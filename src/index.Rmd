@@ -31,6 +31,40 @@ sassc styles.scss styles.css
 cp styles.css cache/
 ```
 
+# Our End Goal
+
+Our end goal is to turn text and code into very nice looking PDF documents:
+
+```{r, include = FALSE}
+finex_in_hash_cache <- function(put) {
+  return(
+    in_hash_cache("docs/finex/report.Rmd", put) &&
+    in_hash_cache("docs/finex/sample.csv", put) &&
+    in_hash_cache("docs/finex/template.tex", put) &&
+    in_hash_cache("docs/finex/references.bib", put) &&
+    in_hash_cache("docs/finex/chicago.csl", put)
+  )
+}
+```
+
+```{bash, include = FALSE, eval = finex_in_hash_cache(FALSE)}
+cp -r cache/finex docs/
+cp -r cache/finex docs/
+```
+
+```{bash, include = FALSE, eval = !finex_in_hash_cache(TRUE)}
+cd docs/finex
+Rscript -e "rmarkdown::render('report.Rmd')"
+pdftoppm "report.pdf" "report" -png -f 1 -l 9
+
+cd ../..
+cp -r docs/finex cache/
+cp -r docs/finex cache/
+```
+
+![](docs/finex/report-04.png){width=65%}
+
+
 # What is LaTeX?
 
 LaTeX is a document typsetting language and build system based off TeX
@@ -1251,33 +1285,6 @@ A final product might look something like this:
 ```
 
 ----
-
-```{r, include = FALSE}
-finex_in_hash_cache <- function(put) {
-  return(
-    in_hash_cache("docs/finex/report.Rmd", put) &&
-    in_hash_cache("docs/finex/sample.csv", put) &&
-    in_hash_cache("docs/finex/template.tex", put) &&
-    in_hash_cache("docs/finex/references.bib", put) &&
-    in_hash_cache("docs/finex/chicago.csl", put)
-  )
-}
-```
-
-```{bash, include = FALSE, eval = finex_in_hash_cache(FALSE)}
-cp -r cache/finex docs/
-cp -r cache/finex docs/
-```
-
-```{bash, include = FALSE, eval = !finex_in_hash_cache(TRUE)}
-cd docs/finex
-Rscript -e "rmarkdown::render('report.Rmd')"
-pdftoppm "report.pdf" "report" -png -f 1 -l 9
-
-cd ../..
-cp -r docs/finex cache/
-cp -r docs/finex cache/
-```
 
 ![](docs/finex/report-01.png){width=60%}
 
