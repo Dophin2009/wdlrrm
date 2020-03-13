@@ -16,7 +16,7 @@ output:
     transition: fade
 ---
 
-```{r cache_funs, include = FALSE, code = readLines("cache.R")}
+```{r cache_funcs, include = FALSE, code = readLines("cache.R")}
 ```
 
 ```{bash, include = FALSE, eval = in_hash_cache("styles.scss", FALSE)}
@@ -446,6 +446,8 @@ We can convert it to PDF:
 -   Markdown is first converted to TeX
 -   `pdflatex`, by default, converts to TeX to PDF
 -   A TeX installation is required
+    -   Easy to use TinyTeX if you don't want to have a big TeX installation
+        -- around 500MB
 
 ----
 
@@ -862,6 +864,9 @@ people_df[3, "iq"]                    # IQ of the person in the third row
 
 We can read in data from a CSV (comma-separated values) file into a data frame
 like so:
+
+```{.csv include=docs/file_hash.csv .numberLines}
+```
 
 ```{r, collapse = TRUE, attr.source = c('.numberLines'), cache = TRUE, cache.rebuild = !in_hash_cache("docs/file_hash.csv", TRUE)}
 data <- read.csv("docs/file_hash.csv")
