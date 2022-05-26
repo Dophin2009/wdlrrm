@@ -1308,4 +1308,4 @@ A final product might look something like this:
 # Source Code
 
 The source code can be found on GitHub at
-[github.com/Dophin2009/rmdpresentation](https://github.com/Dophin2009/rmdpresentation)
+[github.com/mirryi/rmdpresentation](https://github.com/mirryi/rmdpresentation)
